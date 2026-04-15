@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Polyclinique Kennedy</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://medias.w2k-digital.com/polyclinique-kennedy/favicon-32x32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Écran de connexion PIN -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fa-solid fa-hospital"></i>
+            </div>
+            <h1>Polyclinique Kennedy</h1>
+            <p>Administration</p>
+            
+            <div class="pin-container">
+                <label>Entrez votre code PIN</label>
+                <div class="pin-inputs">
+                    <input type="password" maxlength="1" class="pin-input" data-index="0" inputmode="numeric" pattern="[0-9]">
+                    <input type="password" maxlength="1" class="pin-input" data-index="1" inputmode="numeric" pattern="[0-9]">
+                    <input type="password" maxlength="1" class="pin-input" data-index="2" inputmode="numeric" pattern="[0-9]">
+                    <input type="password" maxlength="1" class="pin-input" data-index="3" inputmode="numeric" pattern="[0-9]">
+                </div>
+                <div id="pin-error" class="pin-error"></div>
+            </div>
+            
+            <div class="login-footer">
+                <p>Accès réservé au personnel autorisé</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Admin -->
+    <div id="admin-panel" class="admin-panel" style="display:none">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <i class="fa-solid fa-hospital"></i>
+                <span>Polyclinique Kennedy</span>
+            </div>
+            <div class="header-right">
+                <a href="https://polycliniquekennedy.com" target="_blank" class="header-link">
+                    <i class="fa-solid fa-external-link"></i> Voir le site
+                </a>
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="admin-nav">
+            <a href="#" class="nav-item active" data-section="actualites">
+                <i class="fa-solid fa-newspaper"></i>
+                <span>Actualités</span>
+            </a>
+            <a href="#" class="nav-item" data-section="temoignages">
+                <i class="fa-solid fa-quote-right"></i>
+                <span>Témoignages</span>
+            </a>
+        </nav>
+
+        <!-- Contenu Principal -->
+        <main class="admin-main">
+            <!-- Section Actualités -->
+            <section id="section-actualites" class="admin-section active">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-newspaper"></i> Actualités</h2>
+                    <button class="btn btn-primary" id="add-actu-btn">
+                        <i class="fa-solid fa-plus"></i> Ajouter
+                    </button>
+                </div>
+                
+                <div class="cards-grid" id="actualites-grid">
+                    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
+                </div>
+            </section>
+
+            <!-- Section Témoignages -->
+            <section id="section-temoignages" class="admin-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-quote-right"></i> Témoignages</h2>
+                    <button class="btn btn-primary" id="add-temoin-btn">
+                        <i class="fa-solid fa-plus"></i> Ajouter
+                    </button>
+                </div>
+                
+                <div class="cards-grid" id="temoignages-grid">
+                    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Chargement...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Actualité -->
+    <div class="modal" id="modal-actu">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-actu-title"><i class="fa-solid fa-newspaper"></i> Nouvelle Actualité</h3>
+                <button class="modal-close" data-modal="modal-actu">&times;</button>
+            </div>
+            <form id="form-actu">
+                <div class="modal-body">
+                    <input type="hidden" id="actu-id">
+                    
+                    <div class="form-group">
+                        <label for="actu-titre">Titre *</label>
+                        <input type="text" id="actu-titre" required placeholder="Titre de l'actualité">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="actu-date">Date *</label>
+                            <input type="date" id="actu-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="actu-statut">Statut</label>
+                            <select id="actu-statut">
+                                <option value="true">Publié</option>
+                                <option value="false">Brouillon</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="actu-image">Image *</label>
+                        <div class="image-upload">
+                            <input type="file" id="actu-image-file" accept="image/*">
+                            <input type="hidden" id="actu-image-url">
+                            <div class="image-preview" id="actu-image-preview">
+                                <i class="fa-solid fa-cloud-upload"></i>
+                                <span>Cliquez pour uploader</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="actu-extrait">Extrait *</label>
+                        <textarea id="actu-extrait" required placeholder="Court résumé (2-3 phrases)" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="actu-contenu">Contenu complet</label>
+                        <textarea id="actu-contenu" placeholder="Contenu détaillé..." rows="6"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-actu">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Témoignage -->
+    <div class="modal" id="modal-temoin">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-temoin-title"><i class="fa-solid fa-quote-right"></i> Nouveau Témoignage</h3>
+                <button class="modal-close" data-modal="modal-temoin">&times;</button>
+            </div>
+            <form id="form-temoin">
+                <div class="modal-body">
+                    <input type="hidden" id="temoin-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="temoin-nom">Nom complet *</label>
+                            <input type="text" id="temoin-nom" required placeholder="Ex: Konan Jean-Baptiste">
+                        </div>
+                        <div class="form-group">
+                            <label for="temoin-fonction">Fonction *</label>
+                            <input type="text" id="temoin-fonction" required placeholder="Ex: DRH, GR Group">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temoin-photo">Photo *</label>
+                        <div class="image-upload">
+                            <input type="file" id="temoin-photo-file" accept="image/*">
+                            <input type="hidden" id="temoin-photo-url">
+                            <div class="image-preview" id="temoin-photo-preview">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Cliquez pour uploader</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temoin-note">Note</label>
+                        <div class="rating-select">
+                            <span class="star active" data-value="1"><i class="fa-solid fa-star"></i></span>
+                            <span class="star active" data-value="2"><i class="fa-solid fa-star"></i></span>
+                            <span class="star active" data-value="3"><i class="fa-solid fa-star"></i></span>
+                            <span class="star active" data-value="4"><i class="fa-solid fa-star"></i></span>
+                            <span class="star active" data-value="5"><i class="fa-solid fa-star"></i></span>
+                        </div>
+                        <input type="hidden" id="temoin-note" value="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temoin-texte">Témoignage *</label>
+                        <textarea id="temoin-texte" required placeholder="Le témoignage du client..." rows="5"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temoin-statut">Statut</label>
+                        <select id="temoin-statut">
+                            <option value="true">Publié</option>
+                            <option value="false">Masqué</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-temoin">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation Suppression -->
+    <div class="modal" id="modal-delete">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Confirmation</h3>
+                <button class="modal-close" data-modal="modal-delete">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
+                <input type="hidden" id="delete-id">
+                <input type="hidden" id="delete-type">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal="modal-delete">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">
+                    <i class="fa-solid fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
